@@ -15,8 +15,14 @@ class Dweller extends Model {
         sequelize,
       }
     );
-
     return this;
+  }
+
+  static associate(models) {
+    this.belongsTo(models.Apartment, {
+      foreignKey: 'apartment_id',
+      as: 'apartment',
+    });
   }
 }
 
