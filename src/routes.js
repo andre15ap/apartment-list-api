@@ -6,11 +6,17 @@ import ApartmentController from './app/controllers/ApartmentControllers';
 import BlockController from './app/controllers/BlockControllers';
 import AuthController from './app/controllers/AuthController';
 
+import authMiddleware from './app/middlewares/auth';
+
 const routes = new Router();
 
 routes.post('/auth', AuthController.store);
 
 routes.post('/users', UserController.store);
+
+routes.use(authMiddleware);
+
+routes.put('/users', UserController.update);
 
 routes.post('/dwellers', DwellerController.store);
 
