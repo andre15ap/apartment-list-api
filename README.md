@@ -15,6 +15,8 @@ create database kiper;
 
 ```
 
+rename file `.env.exemple` for `.env` and insert your DB_USER and DB_PASS
+
 Install the dependencies and devDependencies and start the server.
 
 ```sh
