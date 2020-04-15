@@ -12,6 +12,13 @@ class Apartment extends Model {
     );
     return this;
   }
+
+  static associate(models) {
+    this.belongsTo(models.Apartment, {
+      foreignKey: 'block_id',
+      as: 'block',
+    });
+  }
 }
 
 export default Apartment;
