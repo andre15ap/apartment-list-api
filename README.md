@@ -6,7 +6,7 @@ login with token and control authenticated, with Mysql, rest application.
 
 ### Installation
 
-Requires [Node.js](https://nodejs.org/) v10+ to run and Docker.
+Requires [Node.js](https://nodejs.org/) v10+ to run and Msql Database.
 
 Create database
 
