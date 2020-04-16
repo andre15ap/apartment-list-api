@@ -1,6 +1,6 @@
 import 'dotenv/config';
-
 import express from 'express';
+import 'express-async-errors';
 import routes from './routes';
 
 import './database';
@@ -11,6 +11,7 @@ class App {
 
     this.middlewares();
     this.routes();
+    this.handleExeptions();
   }
 
   middlewares() {
@@ -19,6 +20,14 @@ class App {
 
   routes() {
     this.server.use(routes);
+  }
+
+  handleExeptions() {
+    this.server.use(async (err, req, res, next) => {
+      return res
+        .status(500)
+        .json({ error: 'Sentimos muito, algo de errado aconteceu :(' });
+    });
   }
 }
 

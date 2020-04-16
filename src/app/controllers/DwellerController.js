@@ -1,11 +1,12 @@
 import * as Yup from 'yup';
+import Sequelize from 'sequelize';
 import Dweller from '../models/Dweller';
 import Apartment from '../models/Apartment';
 
 class DwellerController {
   async index(req, res) {
-    const { page = 1 } = req.query;
-
+    const { Op } = Sequelize;
+    const { page = 1, name = '', cpf = '' } = req.query;
     const dwellers = await Dweller.findAll({
       attributes: [
         'id',
@@ -25,6 +26,10 @@ class DwellerController {
       ],
       limit: 20,
       offset: (page - 1) * 20,
+      where: {
+        name: { [Op.like]: `%${name}%` },
+        cpf: { [Op.like]: `%${cpf}%` },
+      },
     });
 
     return res.json(dwellers);
