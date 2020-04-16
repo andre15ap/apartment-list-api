@@ -23,5 +23,8 @@ routes.post('/dwellers', DwellerController.store);
 routes.post('/apartments', ApartmentController.store);
 
 routes.post('/blocks', BlockController.store);
+routes.get('/blocks', BlockController.index);
+routes.put('/blocks/:id', BlockController.update);
+routes.delete('/blocks/:id', BlockController.delete);
 
 export default routes;
