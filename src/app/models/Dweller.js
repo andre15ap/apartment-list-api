@@ -15,6 +15,24 @@ class Dweller extends Model {
         sequelize,
       }
     );
+
+    this.addHook('beforeSave', async (dweller) => {
+      if (dweller.responsible) {
+        const { Op } = Sequelize;
+        await Dweller.update(
+          {
+            responsible: false,
+          },
+          {
+            where: {
+              responsible: true,
+              apartment_id: dweller.apartment_id,
+              id: { [Op.not]: dweller.id },
+            },
+          }
+        );
+      }
+    });
     return this;
   }
 

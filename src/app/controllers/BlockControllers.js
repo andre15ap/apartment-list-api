@@ -69,8 +69,8 @@ class BlockController {
         .status(400)
         .json({ error: 'Existem apartamentos cadastrados neste bloco' });
     }
-    const result = await Block.destroy({ where: { id } });
-    return res.json({ delete: result });
+    const deleted = await Block.destroy({ where: { id } });
+    return res.json({ deleted });
   }
 }
 

@@ -14,7 +14,7 @@ class Apartment extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Apartment, {
+    this.belongsTo(models.Block, {
       foreignKey: 'block_id',
       as: 'block',
     });

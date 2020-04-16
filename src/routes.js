@@ -18,7 +18,10 @@ routes.use(authMiddleware);
 
 routes.put('/users', UserController.update);
 
+routes.get('/dwellers', DwellerController.index);
 routes.post('/dwellers', DwellerController.store);
+routes.put('/dwellers/:id', DwellerController.update);
+routes.delete('/dwellers/:id', DwellerController.delete);
 
 routes.get('/apartments', ApartmentController.index);
 routes.post('/apartments', ApartmentController.store);

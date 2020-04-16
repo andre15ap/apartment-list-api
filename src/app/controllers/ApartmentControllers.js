@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Apartment from '../models/Apartment';
+import Block from '../models/Block';
 import Dweller from '../models/Dweller';
 
 class ApartmentController {
@@ -7,6 +8,13 @@ class ApartmentController {
     const { page = 1 } = req.query;
     const apartmenst = await Apartment.findAll({
       attributes: ['id', 'identifier'],
+      include: [
+        {
+          model: Block,
+          as: 'block',
+          attributes: ['id', 'identifier'],
+        },
+      ],
       limit: 20,
       offset: (page - 1) * 20,
     });
@@ -17,6 +25,7 @@ class ApartmentController {
   async store(req, res) {
     const schema = Yup.object().shape({
       identifier: Yup.string().required(),
+      block_id: Yup.number().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -30,14 +39,15 @@ class ApartmentController {
     if (exists) {
       return res.status(400).json({ error: 'Apartamento já existe.' });
     }
-    const { id, identifier } = await Apartment.create(req.body);
+    const { id, identifier, block_id } = await Apartment.create(req.body);
 
-    return res.json({ id, identifier });
+    return res.json({ id, identifier, block_id });
   }
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      identifier: Yup.string().required(),
+      identifier: Yup.string(),
+      block_id: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -47,10 +57,11 @@ class ApartmentController {
     const { identifier } = req.body;
     const { id } = req.params;
 
-    const apartmentExist = await Apartment.findOne({ where: { identifier } });
-
-    if (apartmentExist && apartmentExist.id !== Number(id)) {
-      return res.status(400).json({ error: 'Identificador já esta em uso.' });
+    if (identifier) {
+      const apartmentExist = await Apartment.findOne({ where: { identifier } });
+      if (apartmentExist && apartmentExist.id !== Number(id)) {
+        return res.status(400).json({ error: 'Identificador já esta em uso.' });
+      }
     }
 
     const apartment = await Apartment.findByPk(id);
@@ -63,15 +74,12 @@ class ApartmentController {
 
   async delete(req, res) {
     const { id } = req.params;
-    const dwellers = await Dweller.findAll({ where: { apartment_id: id } });
-
-    if (dwellers.length > 0) {
-      return res
-        .status(400)
-        .json({ error: 'Existem Moradores cadastrados neste Apartamento' });
-    }
-    const result = await Apartment.destroy({ where: { id } });
-    return res.json({ delete: result });
+    await Dweller.update(
+      { responsible: false },
+      { where: { apartment_id: id, responsible: true } }
+    );
+    const deleted = await Apartment.destroy({ where: { id } });
+    return res.json({ deleted });
   }
 }
 
