@@ -27,7 +27,7 @@ class BlockController {
     });
 
     if (exists) {
-      return res.status(400).json({ error: 'Bloco já esta existe.' });
+      return res.status(400).json({ error: 'Bloco já existe.' });
     }
     const { id, identifier } = await Block.create(req.body);
 
@@ -48,7 +48,7 @@ class BlockController {
 
     const blockExist = await Block.findOne({ where: { identifier } });
 
-    if (blockExist && blockExist.id !== id) {
+    if (blockExist && blockExist.id !== Number(id)) {
       return res.status(400).json({ error: 'Identificador já esta em uso.' });
     }
 

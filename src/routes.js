@@ -20,10 +20,13 @@ routes.put('/users', UserController.update);
 
 routes.post('/dwellers', DwellerController.store);
 
+routes.get('/apartments', ApartmentController.index);
 routes.post('/apartments', ApartmentController.store);
+routes.put('/apartments/:id', ApartmentController.update);
+routes.delete('/apartments/:id', ApartmentController.delete);
 
-routes.post('/blocks', BlockController.store);
 routes.get('/blocks', BlockController.index);
+routes.post('/blocks', BlockController.store);
 routes.put('/blocks/:id', BlockController.update);
 routes.delete('/blocks/:id', BlockController.delete);
 
