@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 import Block from '../models/Block';
 import Apartment from '../models/Apartment';
 
+import utils from '../../utils/block';
+
 class BlockController {
   async index(req, res) {
     const { page = 1 } = req.query;
@@ -22,11 +24,7 @@ class BlockController {
       return res.status(400).json({ error: 'Verifique os campos' });
     }
 
-    const exists = await Block.findOne({
-      where: { identifier: req.body.identifier },
-    });
-
-    if (exists) {
+    if (await utils.blockExists(req)) {
       return res.status(400).json({ error: 'Bloco já existe.' });
     }
     const { id, identifier } = await Block.create(req.body);

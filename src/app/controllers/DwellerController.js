@@ -1,18 +1,14 @@
 import * as Yup from 'yup';
-import { Op } from 'sequelize';
 import Dweller from '../models/Dweller';
 import Apartment from '../models/Apartment';
 
+import validateCpf from '../../utils/validateCpf';
+import utils from '../../utils/dweller';
+
 class DwellerController {
   async index(req, res) {
-    const { page = 1, name = '', cpf = '', apartment_id = null } = req.query;
-    const filters = [
-      { name: { [Op.like]: `%${name}%` } },
-      { cpf: { [Op.like]: `%${cpf}%` } },
-    ];
-    if (apartment_id) {
-      filters.push({ apartment_id });
-    }
+    const { page = 1 } = req.query;
+
     const dwellers = await Dweller.findAll({
       attributes: [
         'id',
@@ -32,9 +28,7 @@ class DwellerController {
       ],
       limit: 20,
       offset: (page - 1) * 20,
-      where: {
-        [Op.and]: filters,
-      },
+      where: utils.filters(req),
     });
 
     return res.json(dwellers);
@@ -55,21 +49,12 @@ class DwellerController {
       return res.status(400).json({ error: 'Verifique os campos' });
     }
 
-    const emailExists = await Dweller.findOne({
-      where: { email: req.body.email },
-    });
-
-    if (emailExists) {
-      return res.status(400).json({ error: 'Email já esta em uso.' });
+    if (!validateCpf(req.body.cpf)) {
+      return res.status(400).json({ error: 'CPF inválido.' });
     }
 
-    const responsibleExist = await Dweller.findOne({
-      where: { responsible: true, apartment_id: req.body.apartment_id },
-    });
-
-    let firstResponsible = true;
-    if (responsibleExist) {
-      firstResponsible = false;
+    if (await utils.emailExists(req)) {
+      return res.status(400).json({ error: 'Email já esta em uso.' });
     }
 
     const {
@@ -83,7 +68,7 @@ class DwellerController {
       apartment_id,
     } = await Dweller.create({
       ...req.body,
-      responsible: firstResponsible || req.body.responsible,
+      responsible: (await utils.firstResponsible(req)) || req.body.responsible,
     });
 
     return res.json({
@@ -119,13 +104,12 @@ class DwellerController {
         .json({ error: 'Necessário indicar um novo responsável' });
     }
 
-    if (req.body.email) {
-      const emailExists = await Dweller.findOne({
-        where: { email: req.body.email },
-      });
-      if (emailExists) {
-        return res.status(400).json({ error: 'Email já esta em uso.' });
-      }
+    if (req.body.cpf && !validateCpf(req.body.cpf)) {
+      return res.status(400).json({ error: 'CPF inválido.' });
+    }
+
+    if (req.body.email && (await utils.emailExists(req))) {
+      return res.status(400).json({ error: 'Email já esta em uso.' });
     }
 
     const { id } = req.params;
