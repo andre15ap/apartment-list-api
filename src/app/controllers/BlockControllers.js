@@ -71,6 +71,17 @@ class BlockController {
     const deleted = await Block.destroy({ where: { id } });
     return res.json({ deleted });
   }
+
+  async findAll(req, res) {
+    const bocks = await Block.findAll({
+      attributes: [
+        ['id', 'value'],
+        ['identifier', 'label'],
+      ],
+      order: ['identifier'],
+    });
+    return res.json(bocks);
+  }
 }
 
 export default new BlockController();

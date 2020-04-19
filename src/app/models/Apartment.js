@@ -18,6 +18,10 @@ class Apartment extends Model {
       foreignKey: 'block_id',
       as: 'block',
     });
+    this.hasMany(models.Dweller, {
+      foreignKey: 'apartment_id',
+      as: 'dwellers',
+    });
   }
 }
 

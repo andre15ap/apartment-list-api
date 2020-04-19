@@ -22,6 +22,7 @@ routes.get('/dwellers', DwellerController.index);
 routes.post('/dwellers', DwellerController.store);
 routes.put('/dwellers/:id', DwellerController.update);
 routes.delete('/dwellers/:id', DwellerController.delete);
+routes.get('/dwellers-findall', DwellerController.findAll);
 
 routes.get('/apartments', ApartmentController.index);
 routes.post('/apartments', ApartmentController.store);
@@ -32,5 +33,6 @@ routes.get('/blocks', BlockController.index);
 routes.post('/blocks', BlockController.store);
 routes.put('/blocks/:id', BlockController.update);
 routes.delete('/blocks/:id', BlockController.delete);
+routes.get('/blocks-findall/', BlockController.findAll);
 
 export default routes;

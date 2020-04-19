@@ -133,6 +133,18 @@ class DwellerController {
 
     return res.json({ deleted });
   }
+
+  async findAll(req, res) {
+    const dwellers = await Dweller.findAll({
+      attributes: [
+        ['id', 'value'],
+        ['name', 'label'],
+      ],
+      order: ['name'],
+      where: { apartment_id: null },
+    });
+    return res.json(dwellers);
+  }
 }
 
 export default new DwellerController();
