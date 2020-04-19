@@ -27,6 +27,7 @@ class DwellerController {
         },
       ],
       limit: 20,
+      order: ['name'],
       offset: (page - 1) * 20,
       where: utils.filters(req),
     });
@@ -37,11 +38,11 @@ class DwellerController {
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      birthday: Yup.date().required(),
+      birthday: Yup.date(),
       cpf: Yup.string().required(),
       phone: Yup.string().required(),
       email: Yup.string().email().required(),
-      apartment_id: Yup.number().required(),
+      apartment_id: Yup.number(),
       responsible: Yup.bool(),
     });
 
