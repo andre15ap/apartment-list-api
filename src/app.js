@@ -1,4 +1,5 @@
 import 'dotenv/config';
+
 import express from 'express';
 import cors from 'cors';
 import 'express-async-errors';
@@ -12,7 +13,7 @@ class App {
 
     this.middlewares();
     this.routes();
-    this.handleExeptions();
+    // this.handleExeptions();
   }
 
   middlewares() {

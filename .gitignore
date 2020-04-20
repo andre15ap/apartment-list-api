@@ -8,4 +8,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+__tests__/coverage
+__tests__/database.sqlite
+
 

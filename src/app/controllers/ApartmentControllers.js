@@ -1,5 +1,4 @@
 import * as Yup from 'yup';
-// import { Op } from 'sequelize';
 import Apartment from '../models/Apartment';
 import Block from '../models/Block';
 import Dweller from '../models/Dweller';
@@ -43,7 +42,7 @@ class ApartmentController {
     }
 
     const { dwellers } = req.body;
-    if (dwellers.length < 1) {
+    if (!dwellers || dwellers.length < 1) {
       return res
         .status(400)
         .json({ error: 'Necessário informar ao menos um morador' });
@@ -82,7 +81,7 @@ class ApartmentController {
     const { identifier, dwellers } = req.body;
     const { id } = req.params;
 
-    if (dwellers.length < 1) {
+    if (dwellers && dwellers.length < 1) {
       return res
         .status(400)
         .json({ error: 'Necessário informar ao menos um morador' });
@@ -100,34 +99,36 @@ class ApartmentController {
       return res.status(400).json({ error: 'Apartamanto não encontrado' });
     }
 
-    const dwellerResponsible = await Dweller.findOne({
-      where: { apartment_id: id, responsible: true },
-    });
-
-    await Dweller.update(
-      { apartment_id: null, responsible: false },
-      { where: { apartment_id: id } }
-    );
-
-    dwellers.forEach(async (value, index) => {
-      const dweller = await Dweller.findByPk(value);
-      await dweller.update({
-        apartment_id: id,
-        responsible: dwellerResponsible
-          ? dweller.id === dwellerResponsible.id
-          : !!(index === 0),
-      });
-    });
-
-    dwellers.forEach(async (value, index) => {
-      const dweller = await Dweller.findByPk(value);
-      await dweller.update({
-        apartment_id: id,
-        responsible: !!(index === 0),
-      });
-    });
-
     await apartment.update(req.body);
+
+    if (dwellers) {
+      const dwellerResponsible = await Dweller.findOne({
+        where: { apartment_id: id, responsible: true },
+      });
+
+      await Dweller.update(
+        { apartment_id: null, responsible: false },
+        { where: { apartment_id: id } }
+      );
+
+      dwellers.forEach(async (value, index) => {
+        const dweller = await Dweller.findByPk(value);
+        await dweller.update({
+          apartment_id: id,
+          responsible: dwellerResponsible
+            ? dweller.id === dwellerResponsible.id
+            : !!(index === 0),
+        });
+      });
+
+      dwellers.forEach(async (value, index) => {
+        const dweller = await Dweller.findByPk(value);
+        await dweller.update({
+          apartment_id: id,
+          responsible: !!(index === 0),
+        });
+      });
+    }
     return res.json(apartment);
   }
 

@@ -26,3 +26,9 @@ $ yarn sequelize db:migrate
 $ yarn dev
 ```
 
+Run tests
+
+```sh
+$ yarn test
+```
+
