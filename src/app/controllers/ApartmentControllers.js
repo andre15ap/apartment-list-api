@@ -21,10 +21,7 @@ class ApartmentController {
         {
           model: Dweller,
           as: 'dwellers',
-          attributes: [
-            ['id', 'value'],
-            ['name', 'label'],
-          ],
+          attributes: [['id', 'value'], ['name', 'label'], 'responsible'],
         },
       ],
       limit: 20,
@@ -142,6 +139,17 @@ class ApartmentController {
     );
     const deleted = await Apartment.destroy({ where: { id } });
     return res.json({ deleted });
+  }
+
+  async findAll(req, res) {
+    const apartments = await Apartment.findAll({
+      attributes: [
+        ['id', 'value'],
+        ['identifier', 'label'],
+      ],
+      order: ['identifier'],
+    });
+    return res.json(apartments);
   }
 }
 

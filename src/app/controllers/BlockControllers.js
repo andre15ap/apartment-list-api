@@ -10,8 +10,8 @@ class BlockController {
     const bocks = await Block.findAll({
       attributes: ['id', 'identifier'],
       order: ['identifier'],
-      limit: 15,
-      offset: (page - 1) * 15,
+      limit: 20,
+      offset: (page - 1) * 20,
     });
     return res.json(bocks);
   }

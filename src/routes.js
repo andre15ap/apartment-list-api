@@ -28,6 +28,7 @@ routes.get('/apartments', ApartmentController.index);
 routes.post('/apartments', ApartmentController.store);
 routes.put('/apartments/:id', ApartmentController.update);
 routes.delete('/apartments/:id', ApartmentController.delete);
+routes.get('/apartments-findall', ApartmentController.findAll);
 
 routes.get('/blocks', BlockController.index);
 routes.post('/blocks', BlockController.store);
