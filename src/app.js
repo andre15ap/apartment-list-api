@@ -13,7 +13,7 @@ class App {
 
     this.middlewares();
     this.routes();
-    // this.handleExeptions();
+    this.handleExeptions();
   }
 
   middlewares() {
