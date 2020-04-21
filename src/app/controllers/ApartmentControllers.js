@@ -57,13 +57,15 @@ class ApartmentController {
     }
     const { id, identifier, block_id } = await Apartment.create(req.body);
 
-    dwellers.forEach(async (value, index) => {
+    const updateAll = dwellers.map(async (value, index) => {
       const dweller = await Dweller.findByPk(value);
       await dweller.update({
         apartment_id: id,
         responsible: !!(index === 0),
       });
     });
+
+    await Promise.all(updateAll);
 
     return res.json({ id, identifier, block_id });
   }
@@ -99,8 +101,6 @@ class ApartmentController {
       return res.status(400).json({ error: 'Apartamanto não encontrado' });
     }
 
-    await apartment.update(req.body);
-
     if (dwellers) {
       const dwellerResponsible = await Dweller.findOne({
         where: { apartment_id: id, responsible: true },
@@ -111,24 +111,21 @@ class ApartmentController {
         { where: { apartment_id: id } }
       );
 
-      dwellers.forEach(async (value, index) => {
+      const updateAll = dwellers.map(async (value, index) => {
         const dweller = await Dweller.findByPk(value);
         await dweller.update({
           apartment_id: id,
-          responsible: dwellerResponsible
-            ? dweller.id === dwellerResponsible.id
-            : !!(index === 0),
+          responsible:
+            dwellerResponsible && dwellers.includes(dwellerResponsible.id)
+              ? !!(dweller.id === dwellerResponsible.id)
+              : !!(index === 0),
         });
       });
 
-      dwellers.forEach(async (value, index) => {
-        const dweller = await Dweller.findByPk(value);
-        await dweller.update({
-          apartment_id: id,
-          responsible: !!(index === 0),
-        });
-      });
+      await Promise.all(updateAll);
     }
+
+    await apartment.update(req.body);
     return res.json(apartment);
   }
 
